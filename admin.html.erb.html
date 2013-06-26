@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Teacher Ducklings -- <%= controller_name.capitalize %> | <%= controller.action_name.capitalize %></title>
+
+  <%= stylesheet_link_tag 'admin' %>
+  <%= javascript_include_tag 'modernizr-2.5.3' %>
+
+  <%= yield :head %>
+</head>
+
+<body>
+  <div id="header">
+    <h2 id="logo">Teacher Ducklings Admin Panel</h2>
+
+    <div id="user-info">
+      Logged in as: <strong><%= current_user.full_name %></strong>
+      (<%= link_to 'Log out', logout_path %>)
+      <div class="external-link"><%= link_to 'Site Home Page', root_path %></div>
+    </div>
+    <div class="clear"></div>
+
+    <ul id="nav">
+      <li><%= link_to "Dashboard",  admin_root_path %></li>
+      <li><%= link_to "Users",      admin_users_path %></li>
+      <li><%= link_to "Categories", admin_categories_path %></li>
+      <li><%= link_to "Posts",      admin_posts_path %></li>
+      <li><%= link_to "Links",      admin_links_path %></li>
+      <li><%= link_to "Videos",     admin_videos_path %></li>
+      <li><%= link_to "Meetings",   admin_meetings_path %></li>
+    </ul>
+    <div class="clear"></div>
+  </div>
+  <!-- End Header -->
+
+  <div id="main-body">
+    <div id="primary-content">
+      <% flash.each do |name,value| -%>
+        <div class="alert alert-<%= name %>">
+          <%= value %>
+        </div>
+      <% end -%>
+
+      <%= yield %>
+    </div>
+    <!-- End Primary Content -->
+      
+    <div id="secondary-content">
+      <h3>Upcoming Meetings</h3>
+      <ul id="upcoming-meetings">
+        <% @upcoming_meetings.each do |meeting| %>
+          <li>
+            <%= meeting.moderator.full_name %>
+            has a meeting with
+            <%= meeting.user.full_name %>
+            in <%= pluralize(meeting.days_from_today_to_meeting, 'day') %>. 
+            Go to the 
+            <%= link_to "meeting room", meeting_path(meeting) %> now.
+        </li>
+        <% end %>	
+      </ul>
+      
+      <h3>Recent Uploads</h3>
+      <ul id="recent-videos">
+        <% @recent_videos.each do |video| %>
+          <li>
+            <%= link_to video.user.full_name, admin_user_path(video.user) %> 
+            uploaded a video 
+            <%= time_ago_in_words(video.created_at) %> ago.
+            <%= link_to "Watch it now", admin_video_path(video) %>.
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <!-- End Secondary Content -->
+    <div class="clear"></div>
+
+    <div id="footer">
+        <p>&copy; Copyright Teacher Ducklings</p>
+    </div>
+    <!-- End Footer -->
+
+  </div>
+  <!-- End Main Body -->
+
+  <%= javascript_include_tag 'admin' %>
+  <%= yield :javascript %>
+</body>
+</html>
